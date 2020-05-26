@@ -568,6 +568,9 @@ class FileContentsManager(FileManagerMixin, ContentsManager):
         # Move the file
         try:
             with self.perm_to_403():
+                for i in os.scandir():
+                    if i.is_dir():
+                        raise web.HTTPError(500, 'Renaming a folder with subfolders is not allowed: %s' % (old_path))
                 shutil.move(old_os_path, new_os_path)
         except web.HTTPError:
             raise
